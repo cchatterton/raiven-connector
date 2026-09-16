@@ -243,7 +243,7 @@ Chat transcript:
 		),
 	);
 
-	$response = as329_rai_direct_chat_completion($messages);
+	$response = as329_rai_direct_chat_completion($messages, 'memory');
 
 	if (is_wp_error($response)) {
 		return $response;

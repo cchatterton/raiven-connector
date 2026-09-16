@@ -3,7 +3,7 @@ Contributors:
 Tags: ai, connector, chat, alphasys
 Requires at least: 7.0
 Tested up to: 7.0.4
-Stable tag: 0.2.2
+Stable tag: 0.3.0
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -31,6 +31,11 @@ Live generation verified with the service default and qwen3.8-flash-next-nvfp4. 
 5. Open rAIven > Live Chat, send a message; the service selects its default model.
 
 == Frequently Asked Questions ==
+
+= What is stored in Logs? =
+
+All outgoing connector requests and responses, including native AI Client calls from other plugins, are stored in a per-site custom database table for 10 days. Administrators can inspect payloads, HTTP status, timing and source under rAIven > Logs. Headers and API credentials are excluded/redacted. Bodies are limited to 2 MiB with a truncation marker. Cached lookups do not make requests and are not logged. Logging starts with this update. Automatic deletion runs with WordPress scheduled tasks and connector/admin activity; inactive sites wait until activity resumes. Deactivation/uninstall retains the table and stops cleanup. Logs contain prompts and responses and are visible to site administrators.
+
 
 = Where is my API key stored? =
 In the native WordPress connector option, unless supplied by environment variable or constant. Keys are never included in the chat UI, transcripts or GitHub requests.
@@ -60,6 +65,9 @@ Terms: https://docs.github.com/en/site-policy/github-terms/github-terms-of-servi
 Privacy: https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement
 
 == Changelog ==
+
+= 0.3.0 =
+* Added rAIven > Logs for all outgoing connector exchanges, including native AI Client generation, model discovery, chat and memory. Logs use a per-site custom database table with 10-day retention, paginated request/response details, HTTP status and timing. API credentials are redacted; administrators alone can view logs. Bodies are capped at 2 MiB with an explicit truncation marker.
 
 = 0.2.2 =
 * Locked console model selection to the service default and prevented application errors being replaced by hosting HTTP 502 pages.

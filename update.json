@@ -1,4 +1,4 @@
 {
-  "version": "0.2.2",
-  "body": "Locked console generation to the rAIven service default and removed model selection. Existing saved model IDs are ignored automatically, with no settings changes required after updating. Chat application failures now return a JSON error envelope with HTTP 200 to avoid hosting proxies replacing HTTP 502 with HTML. Authentication and permission failures keep their HTTP error status."
+  "version": "0.3.0",
+  "body": "Added rAIven > Logs for all outgoing connector exchanges, including native AI Client generation, model discovery, chat and memory. Logs use a per-site custom database table with 10-day retention, paginated request/response details, HTTP status and timing. API credentials are redacted; administrators alone can view logs. Bodies are capped at 2 MiB with an explicit truncation marker."
 }

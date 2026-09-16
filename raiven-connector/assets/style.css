@@ -54,3 +54,8 @@
 .as329-rai-reference summary { cursor: pointer; font-weight: 600; }
 .as329-rai-reference pre { overflow-x: auto; padding: .75rem; background: var(--rai-soft); }
 @media (min-width: 70rem) { .as329-rai-layout { grid-template-columns: minmax(18rem, 1fr) minmax(0, 1.7fr); } }
+
+.as329-rai-log-table { overflow-x: auto; margin: 1.25rem 0; }
+.as329-rai-log-table table { min-width: 48rem; }
+.as329-rai-log-body { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30rem; overflow: auto; padding: 1rem; background: var(--rai-soft); }
+.as329-rai-log-pages { display: flex; align-items: center; gap: 1rem; margin: 1rem 0; }

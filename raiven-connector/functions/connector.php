@@ -93,7 +93,7 @@ function as329_rai_endpoint($path) {
     return untrailingslashit($settings['api_base_url']) . '/' . ltrim($path, '/');
 }
 
-function as329_rai_request($path, $key, $payload = null) {
+function as329_rai_request($path, $key, $payload = null, $source = '') {
     if ($key === '') { return new WP_Error('raiven_key', __('Configure your rAIven API key in Settings → Connectors.', 'raiven-connector')); }
     $url = as329_rai_endpoint($path);
     if (is_wp_error($url)) { return $url; }
@@ -105,7 +105,15 @@ function as329_rai_request($path, $key, $payload = null) {
         $args['headers']['Content-Type'] = 'application/json';
         $args['body'] = wp_json_encode($payload);
     }
-    $response = wp_safe_remote_request($url, $args);
+    $source = $payload === null ? 'model-discovery' : ($source ?: (wp_doing_cron() ? 'background' : 'connector'));
+    $entry = as329_rai_exchange_start($source, $payload === null ? 'GET' : 'POST', $url, $payload, array($key));
+    try {
+        $response = wp_safe_remote_request($url, $args);
+        as329_rai_exchange_finish($entry, is_wp_error($response) ? 0 : wp_remote_retrieve_response_code($response), is_wp_error($response) ? '' : wp_remote_retrieve_body($response), is_wp_error($response) ? 'Network request failed.' : '');
+    } catch (Throwable $exception) {
+        as329_rai_exchange_finish($entry, 0, '', 'Transport exception.');
+        throw $exception;
+    }
     if (is_wp_error($response)) {
         return new WP_Error('raiven_network', __('rAIven could not be reached. Check the endpoint and try again.', 'raiven-connector'));
     }
@@ -155,7 +163,7 @@ function as329_rai_get_model_ids() {
     return is_wp_error($models) ? array() : $models;
 }
 
-function as329_rai_direct_chat_completion($messages) {
+function as329_rai_direct_chat_completion($messages, $source = 'console') {
     $settings = as329_rai_get_settings();
     $api_messages = array();
     foreach (is_array($messages) ? $messages : array() as $message) {
@@ -171,7 +179,7 @@ function as329_rai_direct_chat_completion($messages) {
         'temperature' => (float) $settings['temperature'], 'max_tokens' => (int) $settings['max_tokens'],
     );
     // Always use the service default. Never forward a stale saved model such as gpt-4.
-    $data = as329_rai_request('chat/completions', as329_rai_get_api_key(), $payload);
+    $data = as329_rai_request('chat/completions', as329_rai_get_api_key(), $payload, $source);
     if (is_wp_error($data)) { return $data; }
     $content = $data['choices'][0]['message']['content'] ?? null;
     if (!is_string($content) || trim($content) === '') {

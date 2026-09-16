@@ -2,7 +2,7 @@
 
 An AlphaSys AI provider for the native WordPress Connectors and AI Client APIs, with an administrator chat console.
 
-**Version:** 0.2.2
+**Version:** 0.3.0
 **Requirements:** WordPress 7.0+, PHP 8.1+
 **License:** GPL v2 or later
 
@@ -31,6 +31,14 @@ if ( is_wp_error( $result ) ) {
 ```
 
 Use a model ID returned by your rAIven account. Native clients supply their own generation options. The console always uses the service default model; its temperature and token settings apply to console calls. This release supports non-streaming text and chat history; it does not claim image, audio or tool support.
+
+## Exchange logs
+
+Open **rAIven → Logs** to inspect every outgoing connector HTTP exchange, including native AI Client requests made by other plugins, model discovery, console generation and memory indexing/retrieval. Rows include UTC time, initiating WordPress user ID (or system), request source, endpoint, model, HTTP status, duration, and redacted request/response bodies. Pending rows preserve evidence of interrupted requests. Cached model lookups and validation failures before any outbound request are not remote exchanges and do not create rows.
+
+Logs start when this version is installed. They live in `{site_prefix}as329_rai_exchanges`, separate from chat posts. Site administrators can view their site's log; multisite uses separate tables for each site, initialized on first use. Pagination loads 25 summaries at a time and fetches bodies only for the selected exchange.
+
+Rows older than 10 days are purged daily by WP-Cron, on log-page visits, and at most hourly during connector traffic. On inactive sites, deletion waits until cron/traffic resumes. Credentials and headers are excluded/redacted, but prompts and responses are stored and visible to administrators. Each body is capped at 2 MiB and marked when truncated. No third-party analytics service receives the logs. Deactivation/uninstall retains the table; inactive plugins cannot run cleanup. Database failures do not block generation and show an incomplete-log warning on the Logs page.
 
 ## Data and access
 

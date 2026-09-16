@@ -25,7 +25,7 @@ add_filter('pre_http_request', function ($pre, $args, $url) use (&$mode, &$reque
     if ($mode === 'invalid') { return array('headers' => array(), 'response' => array('code' => 200, 'message' => 'OK'), 'body' => 'invalid secret-key-do-not-expose'); }
     if (str_contains($url, 'update.json')) {
         if ($mode === 'github-failure') { return new WP_Error('http_error', 'mock network failure'); }
-        $body = array('version' => $mode === 'current' ? AS329_RAI_VERSION : '0.3.0', 'body' => 'Test release');
+        $body = array('version' => $mode === 'current' ? AS329_RAI_VERSION : '99.0.0', 'body' => 'Test release');
     } elseif (str_contains($url, 'github.com')) { return new WP_Error('http_error', 'mock network failure'); }
     return array('headers' => array(), 'response' => array('code' => $code, 'message' => $code === 200 ? 'OK' : 'Unauthorized'), 'body' => wp_json_encode($body));
 }, 10, 3);
@@ -92,7 +92,7 @@ foreach (array('as329_rai_github_latest_release','as329_rai_github_latest_releas
 $updater = new AS329_RAI_GitHub_Updater();
 $requests = array();
 $update = $updater->add_update_data(new stdClass());
-rai_assert(isset($update->response[AS329_RAI_PLUGIN_BASENAME]) && $update->response[AS329_RAI_PLUGIN_BASENAME]->new_version === '0.3.0', 'native WordPress update injected');
+rai_assert(isset($update->response[AS329_RAI_PLUGIN_BASENAME]) && $update->response[AS329_RAI_PLUGIN_BASENAME]->new_version === '99.0.0', 'native WordPress update injected');
 rai_assert(count($requests) === 1 && str_contains($requests[0]['url'], 'update.json'), 'manifest-first lookup never calls API on success');
 $mode = 'current'; delete_site_transient('as329_rai_github_latest_release');
 $update = $updater->add_update_data($update);

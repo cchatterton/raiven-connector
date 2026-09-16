@@ -81,6 +81,9 @@ class AS329_RAI_Model_Metadata_Directory implements ModelMetadataDirectoryInterf
 }
 
 class AS329_RAI_Text_Generation_Model extends AbstractOpenAiCompatibleTextGenerationModel {
+    public function getHttpTransporter(): \WordPress\AiClient\Providers\Http\Contracts\HttpTransporterInterface {
+        return new AS329_RAI_Logged_Transporter(parent::getHttpTransporter());
+    }
     protected function createRequest(HttpMethodEnum $method, string $path, array $headers = array(), $data = null): Request {
         $url = as329_rai_endpoint($path);
         if (is_wp_error($url)) { throw new \WordPress\AiClient\Common\Exception\RuntimeException($url->get_error_message()); }
@@ -93,6 +96,29 @@ class AS329_RAI_Text_Generation_Model extends AbstractOpenAiCompatibleTextGenera
     protected function throwIfNotSuccessful(Response $response): void {
         if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
             throw new \WordPress\AiClient\Common\Exception\RuntimeException('rAIven could not complete the request. Check the connection and selected model.');
+        }
+    }
+}
+
+/** Decorate the native transport, including custom transports and network exceptions. */
+class AS329_RAI_Logged_Transporter implements \WordPress\AiClient\Providers\Http\Contracts\HttpTransporterInterface {
+    private \WordPress\AiClient\Providers\Http\Contracts\HttpTransporterInterface $inner;
+    public function __construct(\WordPress\AiClient\Providers\Http\Contracts\HttpTransporterInterface $inner) { $this->inner = $inner; }
+    public function send(Request $request, ?RequestOptions $options = null): Response {
+        $secrets = array();
+        foreach ($request->getHeaders() as $name => $values) {
+            if (strtolower($name) === 'authorization') {
+                foreach ((array)$values as $value) { $secrets[] = preg_replace('/^Bearer\s+/i', '', $value); }
+            }
+        }
+        $entry = as329_rai_exchange_start('native-ai-client', (string) $request->getMethod(), $request->getUri(), $request->getData(), $secrets);
+        try {
+            $response = $this->inner->send($request, $options);
+            as329_rai_exchange_finish($entry, $response->getStatusCode(), $response->getBody());
+            return $response;
+        } catch (Throwable $exception) {
+            as329_rai_exchange_finish($entry, 0, '', 'Native transport exception.');
+            throw $exception;
         }
     }
 }
