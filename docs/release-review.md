@@ -1,0 +1,51 @@
+# v0.2.0 standards review
+
+Standards source: cchatterton/codex-standards, commit 156c5e1, reviewed 2026-09-16.
+
+## Resolved findings
+
+| Area | POC issue | v0.2.0 resolution |
+|---|---|---|
+| Native provider | Availability read the saved key instead of the authentication supplied by WordPress | Availability and metadata directory receive native request authentication; replacement keys tested independently |
+| Models | Repeated remote calls and invented fallback models | Endpoint/credential-scoped cache; explicit errors when discovery fails |
+| Connector identity | Repeated unsupported icon metadata | Native provider logoPath using the existing logo |
+| Request safety | Arbitrary HTTP endpoints, redirects, raw remote response errors | Validated public HTTPS destinations, redirects disabled, bounded direct responses/timeouts, generic errors |
+| Validation | Loose numeric settings and silent coercion | Numeric ranges, scalar checks and previous-value preservation with WordPress notices |
+| Session access | Ordinary post capabilities exposed transcripts to editorial roles | manage_options capability map; author-only console and memory access |
+| Session creation | Merely opening a URL created a session | First deliberate message creates the session |
+| Concurrency | Concurrent sends could overwrite history | Browser busy state and atomic per-user server lock |
+| Draft recovery | Draft was removed before success | Draft preserved until successful response; no duplicate stored prompt on provider error |
+| Data integrity | WordPress unslashing could damage code/path content | Slashed writes and verified history persistence |
+| Memory | Cross-user context and synchronous post-response indexing | Owner filtering, visible control, bounded excerpts and scheduled indexing |
+| Admin UX | Fixed desktop columns, unlabeled input, pixel CSS | AlphaSys tokens, rem dimensions, responsive layout, explicit labels, log announcements and focus states |
+| Packaging | No release metadata, license/readme, updater or build | GPL metadata, docs, release manifest, build script and native GitHub updates |
+
+## Compatibility decisions
+
+- Retain the plugin slug, public prefix, saved options, post type and meta keys.
+- Keep existing memory behaviour on upgrade; new installs default to memory disabled.
+- Retain transcripts and settings on plugin deletion. Delete unwanted sessions through the native WordPress list.
+- Use the standard native connector card, not a custom settings replacement.
+- Do not advertise capabilities not established by the existing OpenAI-compatible text integration.
+- Local prototype remains separately backed up before any replacement.
+
+## Validation
+
+- WordPress 7.0.4 / PHP 8.2.23 disposable runtime, separate database.
+- 26 integration checks for native registration/generation, credential replacement, caching, errors, settings, storage, permissions, memory and update discovery.
+- Six AJAX checks: unauthenticated user, invalid nonce, malformed input, oversized input, invalid session and concurrent request.
+- Browser: empty and populated console, successful mocked send, loading, mocked 429 response with draft retained and focus restored.
+- Desktop 1280×720 and mobile 390×844 screenshots reviewed. Native notices remain outside the hero; version watermark and controls remain visible and uncut.
+- Accessibility: programmatic labels, conversation log/live region, readonly busy input, disabled send, keyboard focus and Enter/Shift+Enter support. No formal assistive-technology certification.
+
+## Known limits
+
+- Contributor field intentionally blank: no WordPress.org username was verified. This is a GitHub release, not a WordPress.org submission.
+- AlphaSys privacy policy linked. Public rAIven-specific service terms were not verified; users must consult their account agreement or AlphaSys. Do not invent a terms URL.
+- Single-site runtime tested; network/multisite activation has no global migration and uses current-site settings, but multisite and older WordPress versions were not runtime-tested.
+- PHP 8.1 is the compatibility floor; the executed runtime checks used PHP 8.2.23. No PHP 8.1-specific syntax was introduced.
+- Background indexing depends on WP-Cron. Large conversations return a new-session instruction instead of silently truncating the active conversation.
+
+## Live service check
+
+The configured service accepted the existing native connector key and returned six model IDs. Synthetic direct and native WordPress completions for qwen3.6-27b-nvfp4, qwen3.8-27b-nvfp4 and gpt-4o all reached the service but received HTTP 400: the service reported no available endpoint for each advertised model. Live generation could not be verified. Model routing must be restored by the rAIven service operator; the connector now reports this condition without exposing the remote response. No existing site settings were changed for these tests.
