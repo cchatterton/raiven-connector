@@ -2,8 +2,8 @@
 
 An AlphaSys AI provider for the native WordPress Connectors and AI Client APIs, with an administrator chat console.
 
-**Version:** 0.2.0  
-**Requirements:** WordPress 7.0+, PHP 8.1+  
+**Version:** 0.2.0
+**Requirements:** WordPress 7.0+, PHP 8.1+
 **License:** GPL v2 or later
 
 Download **raiven-connector.zip** from [the latest release](https://github.com/cchatterton/raiven-connector/releases/latest), then upload it in WordPress. Updates appear on the Plugins screen, including a nonce-protected **Check for updates** link.

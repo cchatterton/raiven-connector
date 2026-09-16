@@ -50,4 +50,3 @@ $functions = array(
 foreach ($functions as $function) {
 	require($dir . 'functions/' . $function);
 }
-
