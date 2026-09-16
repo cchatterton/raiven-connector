@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+Locked console generation to the rAIven service default and removed model selection. Existing saved model IDs are ignored automatically, with no settings changes required after updating. Chat application failures now return a JSON error envelope with HTTP 200 to avoid hosting proxies replacing HTTP 502 with HTML. Authentication and permission failures keep their HTTP error status.
+
 ## 0.2.1
 
 Added rAIven default model selection for console requests. New installs use the service default; existing explicit choices are preserved. Clarified that key validation only checks model-list access. Improved inactive-model guidance and non-JSON HTTP errors while preserving drafts. Verified live generation with the default and qwen3.8-flash-next-nvfp4.

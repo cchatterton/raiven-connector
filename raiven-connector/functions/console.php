@@ -82,7 +82,8 @@ function as329_rai_ajax_send_prompt() {
         delete_option($lock);
     }
     if (is_wp_error($result)) {
-        wp_send_json_error(array('message' => $result->get_error_message(), 'session_id' => $session_id), 502);
+        // Application errors use the JSON envelope; HTTP 502 can be replaced by a hosting proxy's HTML page.
+        wp_send_json_error(array('message' => $result->get_error_message(), 'session_id' => $session_id), 200);
     }
     wp_send_json_success(array('chat_message' => $result, 'session_id' => $session_id));
 }
@@ -135,7 +136,6 @@ function as329_rai_render_admin_page() {
 			$model_err = $model_result->get_error_message();
 		} else {
 			$models = $model_result;
-            if ($settings['model'] !== '' && !in_array($settings['model'], $models, true)) { array_unshift($models, $settings['model']); }
 		}
 	}
 
@@ -160,7 +160,7 @@ function as329_rai_render_admin_page() {
 
 		<div class="as329-rai-layout">
 			<div class="as329-rai-settings-panel">
-				<h2>Chat settings</h2><p class="description">Choose the model and response limits for this console.</p>
+				<h2>Chat settings</h2><p class="description">Set response limits for this console. Model selection is automatic.</p>
 
 				<form method="post" action="options.php">
 					<?php settings_fields('as329_rai_settings_group'); ?>
@@ -185,41 +185,9 @@ function as329_rai_render_admin_page() {
 						</tr>
 
 						<tr>
-							<th scope="row">
-								<label for="as329-rai-model">Model</label>
-							</th>
-							<td>
-								<?php if (!empty($models)) : ?>
-									<select
-										id="as329-rai-model"
-										name="<?php echo esc_attr(AS329_RAI_OPTION); ?>[model]"
-										class="regular-text"
-									>
-										<option value="" <?php selected($settings['model'], ''); ?>>rAIven default (recommended)</option>
-                                        <?php foreach ($models as $model) : ?>
-											<option value="<?php echo esc_attr($model); ?>" <?php selected($settings['model'], $model); ?>>
-												<?php echo esc_html($model); ?>
-											</option>
-										<?php endforeach; ?>
-									</select>
-									<p class="description">The default lets rAIven choose its model. Listed models may not have an active endpoint. Save settings before sending.</p>
-								<?php else : ?>
-									<input
-										type="text"
-										id="as329-rai-model"
-										name="<?php echo esc_attr(AS329_RAI_OPTION); ?>[model]"
-										value="<?php echo esc_attr($settings['model']); ?>"
-										class="regular-text"
-										placeholder="Leave blank for rAIven default"
-									>
-									<?php if ($model_err) : ?>
-										<p class="description as329-rai-error-text">
-											Could not load models: <?php echo esc_html($model_err); ?>
-										</p>
-									<?php endif; ?>
-								<?php endif; ?>
-							</td>
-						</tr>
+                            <th scope="row">Model</th>
+                            <td><strong>Automatic</strong><p class="description">rAIven selects its configured default model. No model setup is needed.</p></td>
+                        </tr>
 
 						<tr>
 							<th scope="row">

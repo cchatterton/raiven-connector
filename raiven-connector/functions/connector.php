@@ -37,11 +37,8 @@ function as329_rai_sanitize_settings($input) {
         add_settings_error(AS329_RAI_OPTION, 'endpoint', __('Enter a public HTTPS API URL without credentials, query parameters or a fragment. The previous URL was kept.', 'raiven-connector'));
         $url = $old['api_base_url'];
     }
-    $model = isset($input['model']) && is_string($input['model']) ? sanitize_text_field(trim($input['model'])) : '';
-    if (!isset($input['model']) || !is_string($input['model']) || strlen($model) > 200) {
-        add_settings_error(AS329_RAI_OPTION, 'model', __('Enter a valid model ID or leave it blank for the rAIven default. The previous model was kept.', 'raiven-connector'));
-        $model = $old['model'];
-    }
+    // Console model selection is locked to the service default, including older saved settings.
+    $model = '';
     $temperature = $input['temperature'] ?? null;
     if (!is_scalar($temperature) || !is_numeric($temperature) || $temperature < 0 || $temperature > 2) {
         add_settings_error(AS329_RAI_OPTION, 'temperature', __('Temperature must be between 0 and 2. The previous value was kept.', 'raiven-connector'));
@@ -119,7 +116,7 @@ function as329_rai_request($path, $key, $payload = null) {
         if ($code === 400) {
             $error_data = json_decode(wp_remote_retrieve_body($response), true);
             if (is_array($error_data) && is_string($error_data['message'] ?? null) && strpos($error_data['message'], 'no available endpoint') !== false) {
-                $message = __('The selected model has no active rAIven endpoint. Choose rAIven default in Chat settings and save, or select another available model.', 'raiven-connector');
+                $message = __('rAIven has no active endpoint for this request. Please try again later or contact your rAIven administrator.', 'raiven-connector');
             }
         }
         if ($code === 429) { $message = __('rAIven is busy or the request limit was reached. Wait a moment before trying again.', 'raiven-connector'); }
@@ -173,13 +170,12 @@ function as329_rai_direct_chat_completion($messages) {
         'messages' => $api_messages, 'stream' => false,
         'temperature' => (float) $settings['temperature'], 'max_tokens' => (int) $settings['max_tokens'],
     );
-    // Omit model to let the service choose its configured default. Explicit choices are preserved.
-    if ($settings['model'] !== '') { $payload['model'] = $settings['model']; }
+    // Always use the service default. Never forward a stale saved model such as gpt-4.
     $data = as329_rai_request('chat/completions', as329_rai_get_api_key(), $payload);
     if (is_wp_error($data)) { return $data; }
     $content = $data['choices'][0]['message']['content'] ?? null;
     if (!is_string($content) || trim($content) === '') {
-        return new WP_Error('raiven_response', __('rAIven returned no text. Try a different model or request.', 'raiven-connector'));
+        return new WP_Error('raiven_response', __('rAIven returned no text. Please try again later.', 'raiven-connector'));
     }
     return trim($content);
 }

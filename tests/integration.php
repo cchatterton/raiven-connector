@@ -48,7 +48,7 @@ $failed = as329_rai_direct_chat_completion(array(array('role' => 'user', 'conten
 rai_assert(is_wp_error($failed) && !str_contains($failed->get_error_message(), 'secret-key'), 'API failure is redacted');
 $mode = 'offline-model';
 $offline = as329_rai_direct_chat_completion(array(array('role'=>'user','content'=>'Test')));
-rai_assert(is_wp_error($offline) && str_contains($offline->get_error_message(), 'Choose rAIven default'), 'inactive service model gives actionable error');
+rai_assert(is_wp_error($offline) && str_contains($offline->get_error_message(), 'no active endpoint'), 'inactive service model gives actionable error');
 $mode = 'invalid';
 rai_assert(is_wp_error(as329_rai_direct_chat_completion(array(array('role' => 'user','content' => 'Test')))), 'invalid JSON handled');
 $mode = 'ok';
@@ -60,13 +60,14 @@ rai_assert(!is_wp_error(as329_rai_direct_chat_completion(array(array('role'=>'us
 rai_assert(!array_key_exists('model', json_decode(end($requests)['args']['body'], true)), 'default request omits model field');
 update_option(AS329_RAI_OPTION, $saved_settings);
 as329_rai_direct_chat_completion(array(array('role'=>'user','content'=>'Test')));
-rai_assert(json_decode(end($requests)['args']['body'], true)['model'] === 'test-model', 'explicit model is preserved');
+rai_assert(!array_key_exists('model', json_decode(end($requests)['args']['body'], true)), 'stale saved model is ignored');
 $bad = as329_rai_sanitize_settings(array('api_base_url' => 'http://127.0.0.1', 'model' => array('bad'), 'temperature' => 12, 'max_tokens' => -2));
-rai_assert($bad['api_base_url'] === AS329_RAI_DEFAULT_BASE_URL && $bad['model'] === 'test-model' && $bad['temperature'] === .7 && $bad['max_tokens'] === 2048, 'invalid settings preserve previous valid values');
+rai_assert($bad['api_base_url'] === AS329_RAI_DEFAULT_BASE_URL && $bad['model'] === '' && $bad['temperature'] === .7 && $bad['max_tokens'] === 2048, 'invalid settings preserve previous valid values');
 rai_assert(!as329_rai_valid_base_url('https://user:pass@example.com/api') && !as329_rai_valid_base_url('https://example.com/api?key=test'), 'URL credentials and query strings rejected');
 $before = (int) wp_count_posts(AS329_RAI_POST_TYPE)->private;
 $_GET = array('page' => 'as329-rai');
 ob_start(); as329_rai_render_admin_page(); $html = ob_get_clean();
+rai_assert(!str_contains($html, 'id="as329-rai-model"') && str_contains($html, 'No model setup is needed.'), 'model selector removed');
 rai_assert((int) wp_count_posts(AS329_RAI_POST_TYPE)->private === $before, 'opening console never creates sessions');
 rai_assert(str_contains($html, 'v' . AS329_RAI_VERSION) && str_contains($html, 'aria-label="Conversation"') && !str_contains($html, 'test-key-a'), 'version, accessible chat and no credentials in HTML');
 $session = 0;

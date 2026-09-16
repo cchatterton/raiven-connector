@@ -67,3 +67,9 @@ Added an empty model selection labelled rAIven default. Console requests omit th
 Corrected key-status wording and added actionable inactive-model guidance and HTTP status information for non-JSON responses. This does not claim to repair upstream outages or the previously observed, unreproduced malformed response.
 
 Validation: 30 integration checks and six AJAX security checks passed; all six plugin PHP files passed syntax checks. The installed v0.2.1 plugin returned OK using the live service default. Console HTML includes the default selector and revised key status. The local console was switched to the service default. No new visual browser pass was performed for this patch. An old disposable UI mock was disabled before running integration checks because it conflicted with the test suite's HTTP mocks.
+
+## v0.2.2 patch verification
+
+Removed the console model selector and always omit model from console generation, including memory requests. Old saved model IDs are ignored without requiring a settings save. Native provider model selection is unchanged. Application-level chat errors now use HTTP 200 with success:false, preserving the error JSON on hosts that intercept HTTP 502. Access and nonce errors retain their status codes. Host interception is a plausible explanation for the reported HTML response, not a confirmed diagnosis of the user's remote server.
+
+Validation: 31 integration checks and seven AJAX checks passed, including stale model handling, selector removal and upstream failure status/envelope. All six plugin PHP files passed lint. The installed v0.2.2 completed a live authenticated request through admin-ajax.php with HTTP 200, JSON success and OK. A separate live generation with a simulated saved gpt-4 also returned OK. Temporary diagnostic login was revoked and the synthetic chat was trashed. No visual browser pass or remote multisite deployment was performed.
