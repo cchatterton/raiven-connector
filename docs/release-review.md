@@ -59,3 +59,11 @@ The configured service accepted the existing native connector key and returned s
 - WordPress detected the published release from a disposable downgraded version fixture containing the new updater. The Check for updates action, native details modal and native update installation all succeeded. The original POC has no updater, so its first upgrade requires ZIP installation.
 - Installed the published ZIP on the local My.AlphaSys site after backing up the original plugin. Existing settings and API key checksums were checked after installation.
 - No WordPress.org submission or service-side configuration change was made.
+
+## v0.2.1 patch verification
+
+Added an empty model selection labelled rAIven default. Console requests omit the model field in this mode, allowing rAIven to select its configured default. Existing explicit model selections are preserved; failures do not silently retry with another model. Native AI Client callers continue to select their own model.
+
+Corrected key-status wording and added actionable inactive-model guidance and HTTP status information for non-JSON responses. This does not claim to repair upstream outages or the previously observed, unreproduced malformed response.
+
+Validation: 30 integration checks and six AJAX security checks passed; all six plugin PHP files passed syntax checks. The installed v0.2.1 plugin returned OK using the live service default. Console HTML includes the default selector and revised key status. The local console was switched to the service default. No new visual browser pass was performed for this patch. An old disposable UI mock was disabled before running integration checks because it conflicted with the test suite's HTTP mocks.

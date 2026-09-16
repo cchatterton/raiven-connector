@@ -38,8 +38,8 @@ function as329_rai_sanitize_settings($input) {
         $url = $old['api_base_url'];
     }
     $model = isset($input['model']) && is_string($input['model']) ? sanitize_text_field(trim($input['model'])) : '';
-    if ($model === '' || strlen($model) > 200) {
-        add_settings_error(AS329_RAI_OPTION, 'model', __('Enter a model ID. The previous model was kept.', 'raiven-connector'));
+    if (!isset($input['model']) || !is_string($input['model']) || strlen($model) > 200) {
+        add_settings_error(AS329_RAI_OPTION, 'model', __('Enter a valid model ID or leave it blank for the rAIven default. The previous model was kept.', 'raiven-connector'));
         $model = $old['model'];
     }
     $temperature = $input['temperature'] ?? null;
@@ -119,7 +119,7 @@ function as329_rai_request($path, $key, $payload = null) {
         if ($code === 400) {
             $error_data = json_decode(wp_remote_retrieve_body($response), true);
             if (is_array($error_data) && is_string($error_data['message'] ?? null) && strpos($error_data['message'], 'no available endpoint') !== false) {
-                $message = __('The selected model has no active rAIven endpoint. Choose another model in Chat settings.', 'raiven-connector');
+                $message = __('The selected model has no active rAIven endpoint. Choose rAIven default in Chat settings and save, or select another available model.', 'raiven-connector');
             }
         }
         if ($code === 429) { $message = __('rAIven is busy or the request limit was reached. Wait a moment before trying again.', 'raiven-connector'); }
@@ -160,7 +160,6 @@ function as329_rai_get_model_ids() {
 
 function as329_rai_direct_chat_completion($messages) {
     $settings = as329_rai_get_settings();
-    if ($settings['model'] === '') { return new WP_Error('raiven_model', __('Choose a model and save Chat settings before sending a message.', 'raiven-connector')); }
     $api_messages = array();
     foreach (is_array($messages) ? $messages : array() as $message) {
         if (in_array($message['role'] ?? '', array('system','user','assistant'), true) && is_string($message['content'] ?? null)) {
@@ -170,10 +169,13 @@ function as329_rai_direct_chat_completion($messages) {
     if (!$api_messages || strlen(wp_json_encode($api_messages)) > 200000) {
         return new WP_Error('raiven_context', __('The conversation is empty or too long. Start a new session for another request.', 'raiven-connector'));
     }
-    $data = as329_rai_request('chat/completions', as329_rai_get_api_key(), array(
-        'model' => $settings['model'], 'messages' => $api_messages, 'stream' => false,
+    $payload = array(
+        'messages' => $api_messages, 'stream' => false,
         'temperature' => (float) $settings['temperature'], 'max_tokens' => (int) $settings['max_tokens'],
-    ));
+    );
+    // Omit model to let the service choose its configured default. Explicit choices are preserved.
+    if ($settings['model'] !== '') { $payload['model'] = $settings['model']; }
+    $data = as329_rai_request('chat/completions', as329_rai_get_api_key(), $payload);
     if (is_wp_error($data)) { return $data; }
     $content = $data['choices'][0]['message']['content'] ?? null;
     if (!is_string($content) || trim($content) === '') {

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+Added rAIven default model selection for console requests. New installs use the service default; existing explicit choices are preserved. Clarified that key validation only checks model-list access. Improved inactive-model guidance and non-JSON HTTP errors while preserving drafts. Verified live generation with the default and qwen3.8-flash-next-nvfp4.
+
+
 ## 0.2.0 - 2026-09-16
 
 - Added native WordPress GitHub updates, release packaging and GPL documentation.

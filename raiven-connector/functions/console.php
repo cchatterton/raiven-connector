@@ -153,8 +153,8 @@ function as329_rai_render_admin_page() {
             <p><?php esc_html_e('Connect WordPress to rAIven and test conversations in one place.', 'raiven-connector'); ?></p>
         </header>
         <section class="as329-rai-status" aria-label="Connection status">
-            <div><strong><?php echo esc_html($api_key === '' ? __('Setup required', 'raiven-connector') : ($model_err ? __('Connection needs attention', 'raiven-connector') : __('Connection verified', 'raiven-connector'))); ?></strong>
-            <p><?php echo esc_html($api_key === '' ? __('Add your API key to start using rAIven.', 'raiven-connector') : ($model_err ?: __('Your API key can access rAIven models.', 'raiven-connector'))); ?></p></div>
+            <div><strong><?php echo esc_html($api_key === '' ? __('Setup required', 'raiven-connector') : ($model_err ? __('Connection needs attention', 'raiven-connector') : __('API key accepted', 'raiven-connector'))); ?></strong>
+            <p><?php echo esc_html($api_key === '' ? __('Add your API key to start using rAIven.', 'raiven-connector') : ($model_err ?: __('Model list accessible. Model availability is confirmed when you send a message.', 'raiven-connector'))); ?></p></div>
             <a class="button" href="<?php echo esc_url(admin_url('options-connectors.php')); ?>"><?php esc_html_e('Manage connection', 'raiven-connector'); ?></a>
         </section>
 
@@ -190,19 +190,19 @@ function as329_rai_render_admin_page() {
 							</th>
 							<td>
 								<?php if (!empty($models)) : ?>
-									<select required
+									<select
 										id="as329-rai-model"
 										name="<?php echo esc_attr(AS329_RAI_OPTION); ?>[model]"
 										class="regular-text"
 									>
-										<?php if ($settings['model'] === '') : ?><option value="" selected>Choose a model</option><?php endif; ?>
+										<option value="" <?php selected($settings['model'], ''); ?>>rAIven default (recommended)</option>
                                         <?php foreach ($models as $model) : ?>
 											<option value="<?php echo esc_attr($model); ?>" <?php selected($settings['model'], $model); ?>>
 												<?php echo esc_html($model); ?>
 											</option>
 										<?php endforeach; ?>
 									</select>
-									<p class="description">Models loaded from rAIven.</p>
+									<p class="description">The default lets rAIven choose its model. Listed models may not have an active endpoint. Save settings before sending.</p>
 								<?php else : ?>
 									<input
 										type="text"
@@ -210,7 +210,7 @@ function as329_rai_render_admin_page() {
 										name="<?php echo esc_attr(AS329_RAI_OPTION); ?>[model]"
 										value="<?php echo esc_attr($settings['model']); ?>"
 										class="regular-text"
-										placeholder="Enter a model ID"
+										placeholder="Leave blank for rAIven default"
 									>
 									<?php if ($model_err) : ?>
 										<p class="description as329-rai-error-text">
@@ -310,10 +310,10 @@ function as329_rai_render_admin_page() {
 						required
 					></textarea>
 
-					<button type="submit" class="button button-primary" id="as329-rai-send-button" <?php disabled($api_key === '' || $settings['model'] === ''); ?>>Send</button>
+					<button type="submit" class="button button-primary" id="as329-rai-send-button" <?php disabled($api_key === ''); ?>>Send</button>
 				</form>
 
-				<?php if ($settings['model'] === '') : ?><p class="description">Choose a model and save Chat settings to enable chat.</p><?php endif; ?>
+				<p class="description">Using the saved Chat settings. Save any changes before sending.</p>
                 <p class="description" id="as329-rai-chat-help">Enter sends. Shift + Enter adds a new line.</p>
 			</div>
         </div>

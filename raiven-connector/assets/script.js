@@ -42,7 +42,11 @@
         try {
             const response = await fetch(as329Rai.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data });
             let json;
-            try { json = await response.json(); } catch (_) { throw new Error('The server returned an unreadable response. Reload this page before retrying; check your saved session first.'); }
+            try { json = await response.json(); } catch (_) {
+                const status = ' (HTTP ' + response.status + ')';
+                const reason = response.status === 504 ? 'The server timed out' : response.status === 502 || response.status === 503 ? 'The server is temporarily unavailable' : 'WordPress returned an unexpected response';
+                throw new Error(reason + status + '. Your message has been kept. Reload and check your saved session before retrying.');
+            }
             if (json?.data?.session_id) {
                 sessionId = String(json.data.session_id);
                 chat.dataset.sessionId = sessionId;

@@ -2,18 +2,18 @@
 
 An AlphaSys AI provider for the native WordPress Connectors and AI Client APIs, with an administrator chat console.
 
-**Version:** 0.2.0
+**Version:** 0.2.1
 **Requirements:** WordPress 7.0+, PHP 8.1+
 **License:** GPL v2 or later
 
 Download **raiven-connector.zip** from [the latest release](https://github.com/cchatterton/raiven-connector/releases/latest), then upload it in WordPress. Updates appear on the Plugins screen, including a nonce-protected **Check for updates** link.
 
-> Service status at release validation: model discovery succeeded, but three advertised models returned “no available endpoint”. Live generation requires the rAIven operator to restore model routing.
+> Live generation verified with the service default and `qwen3.8-flash-next-nvfp4`. Some other advertised models have no active endpoint. The console supports the service default without hardcoding a model.
 
 ## Configure
 
 1. Add a key in **Settings → Connectors → rAIven**. `RAIVEN_API_KEY` may instead be an environment variable or PHP constant.
-2. Open **rAIven → Live Chat**. Confirm the public HTTPS endpoint, choose a model and save settings.
+2. Open **rAIven → Live Chat**. Confirm the public HTTPS endpoint, use rAIven default or choose a model and save settings.
 3. Send a message. A private session is created only after submitting the first message.
 
 Credentials use environment variable → constant → native connector option priority. Legacy key options are retained as direct-console fallbacks. Native clients should use the native connector setting or the standard environment variable/constant.

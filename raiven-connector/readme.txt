@@ -3,7 +3,7 @@ Contributors:
 Tags: ai, connector, chat, alphasys
 Requires at least: 7.0
 Tested up to: 7.0.4
-Stable tag: 0.2.0
+Stable tag: 0.2.1
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -20,7 +20,7 @@ Administrators can manage transcripts. Only a session's author can continue it i
 
 Updates are delivered through the WordPress Plugins screen from the public GitHub release at https://github.com/cchatterton/raiven-connector.
 
-Release validation: model discovery succeeded, but three advertised models had no active service endpoint. Live generation requires the rAIven operator to restore model routing.
+Live generation verified with the service default and qwen3.8-flash-next-nvfp4. Some advertised models have no active endpoint. Use rAIven default in the console to let the service select its configured model.
 
 == Installation ==
 
@@ -61,7 +61,10 @@ Privacy: https://docs.github.com/en/site-policy/privacy-policies/github-general-
 
 == Changelog ==
 
-= 0.2.0 =
+= 0.2.1 =
+* Added rAIven default model selection, clearer key status, and actionable model and HTTP error messages.
+
+= 0.2.1 =
 * Native credential validation, model caching and bounded HTTPS requests.
 * AlphaSys admin console with version watermark, responsive controls and accessible feedback.
 * Private sessions, owner-scoped memory, retained drafts and background indexing.
@@ -72,5 +75,5 @@ Privacy: https://docs.github.com/en/site-policy/privacy-policies/github-general-
 
 == Upgrade Notice ==
 
-= 0.2.0 =
+= 0.2.1 =
 Requires WordPress 7.0+. Existing settings and chats are retained. Transcript access now requires manage_options. Chat continuation and memory are restricted to the session author.
