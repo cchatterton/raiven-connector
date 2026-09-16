@@ -49,3 +49,13 @@ Standards source: cchatterton/codex-standards, commit 156c5e1, reviewed 2026-09-
 ## Live service check
 
 The configured service accepted the existing native connector key and returned six model IDs. Synthetic direct and native WordPress completions for qwen3.6-27b-nvfp4, qwen3.8-27b-nvfp4 and gpt-4o all reached the service but received HTTP 400: the service reported no available endpoint for each advertised model. Live generation could not be verified. Model routing must be restored by the rAIven service operator; the connector now reports this condition without exposing the remote response. No existing site settings were changed for these tests.
+
+## Published release and installation verification
+
+- Public repository: https://github.com/cchatterton/raiven-connector
+- Release: https://github.com/cchatterton/raiven-connector/releases/tag/v0.2.0
+- Release tag points to commit 8c6568aa27bfeb1aed4bc3c43d91a744f8874d46.
+- Published ZIP SHA-256: 30193b11447c6c479855c4ec57b36311e745d2d3d2ef99ae3cfa81f97091ad71.
+- WordPress detected the published release from a disposable downgraded version fixture containing the new updater. The Check for updates action, native details modal and native update installation all succeeded. The original POC has no updater, so its first upgrade requires ZIP installation.
+- Installed the published ZIP on the local My.AlphaSys site after backing up the original plugin. Existing settings and API key checksums were checked after installation.
+- No WordPress.org submission or service-side configuration change was made.
