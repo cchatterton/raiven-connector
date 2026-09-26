@@ -1,4 +1,6 @@
 {
-  "version": "0.3.0",
-  "body": "Added rAIven > Logs for all outgoing connector exchanges, including native AI Client generation, model discovery, chat and memory. Logs use a per-site custom database table with 10-day retention, paginated request/response details, HTTP status and timing. API credentials are redacted; administrators alone can view logs. Bodies are capped at 2 MiB with an explicit truncation marker."
+  "version": "0.3.1",
+  "body": "## 0.3.1 - 2026-09-26\n\n- Replace independent GitHub updater with the guarded AlphaSys controller client.\n- Standardise metadata, links, licensing and WordPress 7.0 / PHP 7.4 compatibility.\n- Preserve existing functionality, settings, hooks and package identity.\n",
+  "requires": "7.0",
+  "requires_php": "7.4"
 }
