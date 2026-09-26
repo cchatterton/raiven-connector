@@ -3,9 +3,10 @@
  *
  * Plugin Name: rAIven Connector
  * Description: Adds rAIven as an AlphaSys AI connector and provides a live admin test console.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Requires at least: 7.0
- * Requires PHP: 8.1
+ * Requires PHP: 7.4
+ * AlphaSys Controller API: 1
  * Update URI: https://github.com/cchatterton/raiven-connector
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -26,7 +27,7 @@ define('AS329_RAI_PLUGIN_FILE', __FILE__);
 define('AS329_RAI_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AS329_RAI_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-define('AS329_RAI_VERSION', '0.3.0');
+define('AS329_RAI_VERSION', '0.3.1');
 define('AS329_RAI_PROVIDER_ID', 'raiven');
 define('AS329_RAI_OPTION', 'as329_rai_settings');
 define('AS329_RAI_POST_TYPE', 'as329_rai_session');
@@ -45,9 +46,11 @@ $functions = array(
 	'connector.php',
 	'logs.php',
 	'console.php',
-	'github-updater.php',
 );
 
 foreach ($functions as $function) {
 	require($dir . 'functions/' . $function);
 }
+
+require_once __DIR__ . '/functions/controller-client.php';
+asuc_client_register(__FILE__, 'raiven-connector');

@@ -1,6 +1,6 @@
 <?php
 /** Run with wp eval-file only in the disposable test database. */
-if (DB_NAME !== 'raiven_release_test') { throw new RuntimeException('Use disposable test database.'); }
+if (!in_array(DB_NAME, ['raiven_release_test', 'tnuc_test'], true)) { throw new RuntimeException('Use disposable test database.'); }
 $GLOBALS['passed'] = 0;
 function log_assert($condition, $label) { global $passed; if (!$condition) { throw new RuntimeException($label); } echo "PASS: $label\n"; $passed++; }
 wp_set_current_user(1);

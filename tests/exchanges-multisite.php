@@ -1,5 +1,5 @@
 <?php
-if (DB_NAME !== 'raiven_release_test' || !is_multisite()) { throw new RuntimeException('Use disposable multisite database.'); }
+if (!in_array(DB_NAME, ['raiven_release_test', 'tnuc_test'], true) || !is_multisite()) { throw new RuntimeException('Use disposable multisite database.'); }
 global $wpdb;
 $root_table=as329_rai_exchange_table();
 $site=get_sites(array('path'=>'/log-test/','number'=>1));

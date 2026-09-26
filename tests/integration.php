@@ -1,6 +1,6 @@
 <?php
 /** Run only in a disposable WordPress install: wp eval-file tests/integration.php */
-if (DB_NAME !== 'raiven_release_test') { throw new RuntimeException('Use the disposable raiven_release_test database.'); }
+if (!in_array(DB_NAME, ['raiven_release_test', 'tnuc_test'], true)) { throw new RuntimeException('Use the disposable raiven_release_test database.'); }
 $GLOBALS['passed'] = 0;
 function rai_assert($value, $label) {
     global $passed;
@@ -88,20 +88,8 @@ $profile = array('people'=>array('Example'),'business'=>array(),'projects'=>arra
 update_post_meta($session, AS329_RAI_META_PROFILE_KEY, wp_json_encode($profile));
 rai_assert(as329_rai_find_matching_memory_sessions($profile) === array(), 'memory never retrieves another administrator’s session');
 wp_set_current_user(1);
-foreach (array('as329_rai_github_latest_release','as329_rai_github_latest_release_error','as329_rai_github_release_backoff') as $cache) { delete_site_transient($cache); }
-$updater = new AS329_RAI_GitHub_Updater();
 $requests = array();
-$update = $updater->add_update_data(new stdClass());
-rai_assert(isset($update->response[AS329_RAI_PLUGIN_BASENAME]) && $update->response[AS329_RAI_PLUGIN_BASENAME]->new_version === '99.0.0', 'native WordPress update injected');
-rai_assert(count($requests) === 1 && str_contains($requests[0]['url'], 'update.json'), 'manifest-first lookup never calls API on success');
-$mode = 'current'; delete_site_transient('as329_rai_github_latest_release');
-$update = $updater->add_update_data($update);
-rai_assert(!isset($update->response[AS329_RAI_PLUGIN_BASENAME]) && empty($update->no_update), 'equal version removes stale update data');
-$mode = 'github-failure'; delete_site_transient('as329_rai_github_latest_release');
-$updater->add_update_data(new stdClass());
-rai_assert(!get_site_transient('as329_rai_github_latest_release') && get_site_transient('as329_rai_github_release_backoff'), 'failed release lookup cached separately with backoff');
-$count = count($requests); $updater->add_update_data(new stdClass());
-rai_assert(count($requests) === $count, 'failure backoff prevents repeated network calls');
-$links = $updater->plugin_row_meta(array(), AS329_RAI_PLUGIN_BASENAME);
-rai_assert(str_contains(implode(' ', $links), 'Check for updates') && str_contains(implode(' ', $links), '_wpnonce'), 'native manual update link has nonce');
+for ($i=0; $i<3; $i++) { get_site_transient('update_plugins'); }
+rai_assert(count($requests) === 0, 'repeated native update reads perform no discovery HTTP');
+rai_assert(!class_exists('AS329_RAI_GitHub_Updater'), 'legacy updater removed');
 echo "Completed " . $GLOBALS['passed'] . " integration checks.\n";

@@ -1,6 +1,6 @@
 <?php
 /** wp eval-file tests/ajax.php in the disposable test database. */
-if (DB_NAME !== 'raiven_release_test') { throw new RuntimeException('Use the disposable test database.'); }
+if (!in_array(DB_NAME, ['raiven_release_test', 'tnuc_test'], true)) { throw new RuntimeException('Use the disposable test database.'); }
 define('DOING_AJAX', true);
 class Raiven_Test_Json_Exit extends RuntimeException {}
 add_filter('wp_die_ajax_handler', function () { return function () { throw new Raiven_Test_Json_Exit(); }; });

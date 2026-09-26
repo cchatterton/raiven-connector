@@ -2,9 +2,9 @@
 Contributors:
 Tags: ai, connector, chat, alphasys
 Requires at least: 7.0
-Tested up to: 7.0.4
-Stable tag: 0.3.0
-Requires PHP: 8.1
+Tested up to: 7.0
+Stable tag: 0.3.1
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,7 +26,7 @@ Live generation verified with the service default and qwen3.8-flash-next-nvfp4. 
 
 1. Download raiven-connector.zip from the GitHub release.
 2. Upload it through Plugins > Add Plugin > Upload Plugin, or replace the existing raiven-connector plugin with the ZIP.
-3. Activate the plugin on WordPress 7.0 or later with PHP 8.1 or later.
+3. Activate the plugin on WordPress 7.0 or later with PHP 7.4 or later.
 4. Add your rAIven key in Settings > Connectors. RAIVEN_API_KEY may also be supplied as an environment variable or PHP constant.
 5. Open rAIven > Live Chat, send a message; the service selects its default model.
 
@@ -60,11 +60,16 @@ Privacy: https://alphasys.com.au/privacy-policy/
 Service terms are supplied with your rAIven account agreement. No public rAIven-specific terms URL was verified for this release; obtain the applicable terms from AlphaSys at https://alphasys.com.au/contact/ before enabling the service. A custom endpoint has its own applicable terms and privacy policy.
 
 GitHub: https://github.com/cchatterton/raiven-connector
-WordPress periodically retrieves public release metadata and downloads the ZIP when an administrator installs an update. GitHub receives normal HTTP connection metadata and the plugin version; rAIven credentials and chats are not sent.
+AS Update Controller retrieves the aggregate catalogue during explicit or scheduled checks and downloads the ZIP when an administrator installs an update. This plugin performs no independent update discovery. GitHub receives normal HTTP connection metadata and the plugin version; rAIven credentials and chats are not sent.
 Terms: https://docs.github.com/en/site-policy/github-terms/github-terms-of-service
 Privacy: https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement
 
 == Changelog ==
+
+= 0.3.1 =
+* Migrate update discovery to AS Update Controller. Preserve feature settings and plugin identity.
+* Match WordPress 7.0 / PHP 7.4 requirements.
+
 
 = 0.3.0 =
 * Added rAIven > Logs for all outgoing connector exchanges, including native AI Client generation, model discovery, chat and memory. Logs use a per-site custom database table with 10-day retention, paginated request/response details, HTTP status and timing. API credentials are redacted; administrators alone can view logs. Bodies are capped at 2 MiB with an explicit truncation marker.
