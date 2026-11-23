@@ -90,7 +90,7 @@ class AS329_RAI_Text_Generation_Model extends AbstractOpenAiCompatibleTextGenera
         $options = $this->getRequestOptions();
         $options = $options ? clone $options : new RequestOptions();
         $options->setMaxRedirects(0);
-        if ($options->getTimeout() === null) { $options->setTimeout(60); }
+        if ($options->getTimeout() === null) { $options->setTimeout(AS329_RAI_GENERATION_TIMEOUT); }
         return new Request($method, $url, $headers, $data, $options);
     }
     protected function throwIfNotSuccessful(Response $response): void {

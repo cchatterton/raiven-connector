@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2 - 2026-11-23
+
+Increased generation requests from a 60-second timeout to 120 seconds for both native WordPress AI Client and direct connector calls. Model discovery remains at 15 seconds.
+
 ## 0.3.1 - 2026-09-26
 
 - Replace independent GitHub updater with the guarded AlphaSys controller client.

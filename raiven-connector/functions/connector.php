@@ -97,7 +97,11 @@ function as329_rai_request($path, $key, $payload = null, $source = '') {
     if ($key === '') { return new WP_Error('raiven_key', __('Configure your rAIven API key in Settings → Connectors.', 'raiven-connector')); }
     $url = as329_rai_endpoint($path);
     if (is_wp_error($url)) { return $url; }
-    $args = array('timeout' => $payload === null ? 15 : 60, 'redirection' => 0,
+    $args = array(
+        'timeout' => $payload === null
+            ? AS329_RAI_MODEL_DISCOVERY_TIMEOUT
+            : AS329_RAI_GENERATION_TIMEOUT,
+        'redirection' => 0,
         'limit_response_size' => 2 * MB_IN_BYTES,
         'headers' => array('Authorization' => 'Bearer ' . $key, 'Accept' => 'application/json'));
     if ($payload !== null) {

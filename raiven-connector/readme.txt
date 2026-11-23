@@ -3,7 +3,7 @@ Contributors:
 Tags: ai, connector, chat, alphasys
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.3.1
+Stable tag: 0.3.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -66,10 +66,12 @@ Privacy: https://docs.github.com/en/site-policy/privacy-policies/github-general-
 
 == Changelog ==
 
+= 0.3.2 =
+* Increased generation requests from a 60-second timeout to 120 seconds for both native AI Client and direct connector calls. Model discovery remains at 15 seconds.
+
 = 0.3.1 =
 * Migrate update discovery to AS Update Controller. Preserve feature settings and plugin identity.
 * Match WordPress 7.0 / PHP 7.4 requirements.
-
 
 = 0.3.0 =
 * Added rAIven > Logs for all outgoing connector exchanges, including native AI Client generation, model discovery, chat and memory. Logs use a per-site custom database table with 10-day retention, paginated request/response details, HTTP status and timing. API credentials are redacted; administrators alone can view logs. Bodies are capped at 2 MiB with an explicit truncation marker.
